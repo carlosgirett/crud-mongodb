@@ -90,26 +90,6 @@
 },
 {
   "_id": {
-    "$oid": "6723e5e6149d7b7a24481528"
-  },
-  "nombre": "Jennifer",
-  "clave": "jjarami231",
-  "email": "jenniferarami@outlook.es",
-  "rol": "Adminstrador",
-  "estado": "True"
-},
-{
-  "_id": {
-    "$oid": "672628d0affff851d9cf196d"
-  },
-  "nombre": "Ramona",
-  "clave": "RR2024",
-  "email": "ramonahermosilla",
-  "rol": "Tesorera",
-  "estado": "True"
-},
-{
-  "_id": {
     "$oid": "67268c33debab2fe6ffba483"
   },
   "nombre": "erika",
