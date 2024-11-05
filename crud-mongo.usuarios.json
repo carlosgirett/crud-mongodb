@@ -1,0 +1,120 @@
+[{
+  "_id": {
+    "$oid": "672398b2149d7b7a2448151c"
+  },
+  "nombre": "carlos",
+  "clave": "1234",
+  "email": "carlossaulgirett29@gmail.com",
+  "estado": "True",
+  "rol": "Administrador"
+},
+{
+  "_id": {
+    "$oid": "6723c375149d7b7a2448151f"
+  },
+  "nombre": "Cristina",
+  "clave": "cristina",
+  "email": "ccontreras@gmail.com",
+  "estado": "True",
+  "rol": "Vendedora"
+},
+{
+  "_id": {
+    "$oid": "6723c3aa149d7b7a24481520"
+  },
+  "nombre": "Gustavo",
+  "clave": "Gcardozo",
+  "email": "gustavocardozo23@gmail.com",
+  "estado": "False",
+  "rol": "Vendedor"
+},
+{
+  "_id": {
+    "$oid": "6723c3b8149d7b7a24481521"
+  },
+  "nombre": "Jessica",
+  "clave": "JsC",
+  "email": "jessicac@outlook.com",
+  "estado": "True",
+  "rol": "Cajero"
+},
+{
+  "_id": {
+    "$oid": "6723e469149d7b7a24481522"
+  },
+  "nombre": "Benjamin",
+  "clave": "benja1234",
+  "email": "bgaleano@outlook.es",
+  "rol": "cajero",
+  "estado": "True"
+},
+{
+  "_id": {
+    "$oid": "6723e512149d7b7a24481523"
+  },
+  "nombre": "Jose",
+  "clave": "jj2024",
+  "email": "josevillam@icloud.com",
+  "rol": "Vendedor",
+  "estado": "False"
+},
+{
+  "_id": {
+    "$oid": "6723e545149d7b7a24481524"
+  },
+  "nombre": "Juan",
+  "clave": "JJ2323",
+  "email": "juanr",
+  "rol": "Vendedor",
+  "estado": "True"
+},
+{
+  "_id": {
+    "$oid": "6723e59b149d7b7a24481526"
+  },
+  "nombre": "Nando",
+  "clave": "NNunez23",
+  "email": "nandonunez23@hotmail.com",
+  "rol": "Administrador",
+  "estado": "True"
+},
+{
+  "_id": {
+    "$oid": "6723e5c2149d7b7a24481527"
+  },
+  "nombre": "Amparo",
+  "clave": "ampv2312",
+  "email": "amparo@outlook.es",
+  "rol": "Administrador",
+  "estado": "False"
+},
+{
+  "_id": {
+    "$oid": "6723e5e6149d7b7a24481528"
+  },
+  "nombre": "Jennifer",
+  "clave": "jjarami231",
+  "email": "jenniferarami@outlook.es",
+  "rol": "Adminstrador",
+  "estado": "True"
+},
+{
+  "_id": {
+    "$oid": "672628d0affff851d9cf196d"
+  },
+  "nombre": "Ramona",
+  "clave": "RR2024",
+  "email": "ramonahermosilla",
+  "rol": "Tesorera",
+  "estado": "True"
+},
+{
+  "_id": {
+    "$oid": "67268c33debab2fe6ffba483"
+  },
+  "nombre": "erika",
+  "clave": "1234",
+  "email": "erikab@gmail.com",
+  "rol": "administrador",
+  "estado": "true"
+}]
