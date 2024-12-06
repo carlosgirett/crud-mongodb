@@ -1,11 +1,11 @@
 import flet as ft
-from conexion.conexion import MongoDBConnection  # Importa la clase de conexión
 
 
 def mostrar_usuarios_view(page: ft.Page, content: ft.Column, db, users_table):
+    print("Vista de usuarios cargada")
     page.title = "Gestión de Usuarios"
     page.window_width = 1335
-    page.window_height = 700
+    page.window_height = 800
 
     # Variables para la paginación
     usuarios_por_pagina = 10
@@ -26,14 +26,17 @@ def mostrar_usuarios_view(page: ft.Page, content: ft.Column, db, users_table):
     tf_rol = ft.TextField(label="Rol")
     tf_estado = ft.TextField(label="Estado")
 
+    #funcion para limpiar campos
     def limpiar_campos():
         tf_user.value = ""
         tf_password.value = ""
         tf_email.value = ""
         tf_rol.value = ""
         tf_estado.value = ""
+        tf_buscar.value = ""
         page.update()
 
+    #funcion que carga los usuarios en la tabla
     def cargar_usuarios(pagina, usuarios=None):
         nonlocal usuarios_filtrados
         users = usuarios if usuarios is not None else db.get_all_documents("usuarios")

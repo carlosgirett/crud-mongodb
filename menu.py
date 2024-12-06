@@ -1,6 +1,7 @@
 import flet as ft
 from conexion.conexion import MongoDBConnection  # Importa la clase de conexión
 from vistas.usuarios_view import mostrar_usuarios_view  # Importa la vista de usuarios
+from vistas.clientes_view import mostrar_clientes_view  # Importa la vista de clientes
 
 def main(page: ft.Page):
     page.title = "Barra de Navegación"
@@ -16,7 +17,7 @@ def main(page: ft.Page):
         scroll="auto"
     )
 
-    # Inicialización de la tabla para usuarios (se reutiliza en la vista de usuarios)
+    # Inicialización de la tabla para usuarios
     users_table = ft.DataTable(
         border=ft.border.all(1, "grey"),
         border_radius=10,
@@ -33,21 +34,32 @@ def main(page: ft.Page):
         rows=[],
     )
 
+    # Inicialización de la tabla para clientes
+    clientes_table = ft.DataTable(
+        border=ft.border.all(1, "grey"),
+        border_radius=10,
+        vertical_lines=ft.BorderSide(1, "grey"),
+        width=1000,
+        columns=[
+            ft.DataColumn(ft.Text("Nombre")),
+            ft.DataColumn(ft.Text("Apellido")),
+            ft.DataColumn(ft.Text("RUC")),
+            ft.DataColumn(ft.Text("Dirección")),
+            ft.DataColumn(ft.Text("Fecha de Nacimiento")),
+            ft.DataColumn(ft.Text("Acciones")),
+        ],
+        rows=[],
+    )
+
     # Función para cambiar el contenido según la opción seleccionada
     def on_navigation_change(e=None):
         selected_index = rail.selected_index  # Lee el índice seleccionado del NavigationRail
         content.controls.clear()  # Limpia el contenido previo
 
         if selected_index == 0:  # Opción "Usuarios"
-            mostrar_usuarios_view(page, content, db, users_table)  # Pasa la tabla aquí
-        elif selected_index == 1:  # Opción "Configuración"
-            content.controls.append(
-                ft.Column(
-                    [ft.Text("Opción 2 seleccionada: Configuración", size=24, weight="bold")],
-                    alignment=ft.MainAxisAlignment.START,
-                    expand=True,
-                )
-            )
+            mostrar_usuarios_view(page, content, db, users_table)
+        elif selected_index == 1:  # Opción "Clientes"
+            mostrar_clientes_view(page, content, db, clientes_table)
         elif selected_index == 2:  # Opción "Ayuda"
             content.controls.append(
                 ft.Column(
@@ -73,9 +85,9 @@ def main(page: ft.Page):
                 label="Usuarios",
             ),
             ft.NavigationRailDestination(
-                icon=ft.Icon(ft.Icons.SETTINGS),
-                selected_icon=ft.Icon(ft.Icons.SETTINGS),
-                label="Configuración",
+                icon=ft.Icon(ft.Icons.SUPERVISED_USER_CIRCLE_ROUNDED),
+                selected_icon=ft.Icon(ft.Icons.SUPERVISED_USER_CIRCLE),
+                label="Clientes",
             ),
             ft.NavigationRailDestination(
                 icon=ft.Icon(ft.Icons.HELP),
