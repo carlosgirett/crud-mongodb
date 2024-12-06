@@ -1,0 +1,220 @@
+import flet as ft
+from conexion.conexion import MongoDBConnection  # Importa la clase de conexión
+
+# Función principal de la vista de usuarios
+def mostrar_usuarios_view(page: ft.Page, content: ft.Column, db, users_table):
+    page.title = "Gestión de Usuarios"
+    page.window_width = 1335
+    page.window_height = 700
+
+    # Variables para la paginación
+    usuarios_por_pagina = 10
+    pagina_actual = 0
+    usuario_seleccionado = None
+
+    # Título principal
+    titulo = ft.Text("Gestión de usuarios", size=24, weight="bold")
+
+    # Campos de entrada de usuario
+    tf_user = ft.TextField(label="Nombre de Usuario")
+    tf_password = ft.TextField(label="Clave")
+    tf_email = ft.TextField(label="E-mail")
+    tf_rol = ft.TextField(label="Rol")
+    tf_estado = ft.TextField(label="Estado")
+
+    # Función para guardar un nuevo usuario en la base de datos
+    def guardar_usuario(e):
+        if not (
+            tf_user.value.strip() and tf_password.value.strip() and tf_email.value.strip() and tf_rol.value.strip() and tf_estado.value.strip()):
+            dialog = ft.AlertDialog(
+                title=ft.Text("Advertencia"),
+                content=ft.Text("Por favor, complete todos los campos antes de continuar."),
+                actions=[ft.TextButton("Aceptar", on_click=lambda e: cerrar_dialogo(dialog))]
+            )
+            page.dialog = dialog
+            dialog.open = True
+            page.update()
+            return
+
+        nuevo_usuario = {
+            "nombre": tf_user.value,
+            "clave": tf_password.value,
+            "email": tf_email.value,
+            "rol": tf_rol.value,
+            "estado": tf_estado.value
+        }
+
+        if db:
+            try:
+                db.insert_document("usuarios", nuevo_usuario)
+            except Exception as ex:
+                dialog = ft.AlertDialog(
+                    title=ft.Text("Error"),
+                    content=ft.Text(f"No se pudo guardar el usuario: {ex}"),
+                    actions=[ft.TextButton("Aceptar", on_click=lambda e: cerrar_dialogo(dialog))]
+                )
+                page.dialog = dialog
+                dialog.open = True
+                page.update()
+                return
+        else:
+            dialog = ft.AlertDialog(
+                title=ft.Text("Error"),
+                content=ft.Text("No se pudo conectar con la base de datos."),
+                actions=[ft.TextButton("Aceptar", on_click=lambda e: cerrar_dialogo(dialog))]
+            )
+            page.dialog = dialog
+            dialog.open = True
+            page.update()
+            return
+
+        limpiar_campos()
+        cargar_usuarios(pagina_actual)
+        page.update()
+
+    def cerrar_dialogo(dialog):
+        dialog.open = False
+        page.update()
+
+    def limpiar_campos():
+        tf_user.value = ""
+        tf_password.value = ""
+        tf_email.value = ""
+        tf_rol.value = ""
+        tf_estado.value = ""
+
+    def modificar_usuario(e):
+        if not usuario_seleccionado or not (
+                tf_user.value.strip() and tf_password.value.strip() and tf_email.value.strip() and tf_rol.value.strip() and tf_estado.value.strip()):
+            dialog = ft.AlertDialog(
+                title=ft.Text("Advertencia"),
+                content=ft.Text("Por favor, seleccione una fila para modificar."),
+                actions=[ft.TextButton("Aceptar", on_click=lambda e: cerrar_dialogo(dialog))]
+            )
+            page.dialog = dialog
+            dialog.open = True
+            page.update()
+            return
+
+        db.update_document("usuarios", {"_id": usuario_seleccionado}, {
+            "$set": {
+                "nombre": tf_user.value,
+                "clave": tf_password.value,
+                "email": tf_email.value,
+                "rol": tf_rol.value,
+                "estado": tf_estado.value
+            }
+        })
+        limpiar_campos()
+        cargar_usuarios(pagina_actual)
+
+    def eliminar_fila(e):
+        fila_id = e.control.data
+        db.delete_document("usuarios", {"_id": fila_id})
+        cargar_usuarios(pagina_actual)
+
+    def seleccionar_usuario(e):
+        nonlocal usuario_seleccionado
+        fila_id = e.control.data
+        usuario = db.get_document("usuarios", {"_id": fila_id})
+        if usuario:
+            usuario_seleccionado = fila_id
+            tf_user.value = usuario.get("nombre", "")
+            tf_password.value = usuario.get("clave", "")
+            tf_email.value = usuario.get("email", "")
+            tf_rol.value = usuario.get("rol", "")
+            tf_estado.value = usuario.get("estado", "")
+            page.update()
+
+    def cargar_usuarios(pagina):
+        users = db.get_all_documents("usuarios")
+        users_table.rows.clear()
+        inicio = pagina * usuarios_por_pagina
+        fin = inicio + usuarios_por_pagina
+        usuarios_pagina = users[inicio:fin]
+
+        for user in usuarios_pagina:
+            users_table.rows.append(
+                ft.DataRow(
+                    cells=[
+                        ft.DataCell(ft.Text(user.get("nombre", ""))),
+                        ft.DataCell(ft.Text(user.get("clave", ""))),
+                        ft.DataCell(ft.Text(user.get("email", ""))),
+                        ft.DataCell(ft.Text(user.get("rol", ""))),
+                        ft.DataCell(ft.Text(user.get("estado", ""))),
+                        ft.DataCell(ft.Row([
+                            ft.IconButton(icon=ft.icons.EDIT, on_click=seleccionar_usuario, data=user["_id"]),
+                            ft.IconButton(icon=ft.icons.DELETE, on_click=eliminar_fila, data=user["_id"])
+                        ]))
+                    ]
+                )
+            )
+        page.update()
+
+    def cambiar_pagina(incremento):
+        nonlocal pagina_actual
+        pagina_actual += incremento
+        if pagina_actual < 0:
+            pagina_actual = 0
+        cargar_usuarios(pagina_actual)
+
+    btn_anterior = ft.IconButton(icon=ft.icons.ARROW_LEFT, on_click=lambda e: cambiar_pagina(-1))
+    btn_siguiente = ft.IconButton(icon=ft.icons.ARROW_RIGHT, on_click=lambda e: cambiar_pagina(1))
+    navegacion_paginacion = ft.Row([btn_anterior, btn_siguiente], alignment=ft.MainAxisAlignment.START)
+
+    submit = ft.OutlinedButton(text="Guardar", on_click=guardar_usuario)
+    modificar_button = ft.OutlinedButton(text="Modificar", on_click=modificar_usuario)
+    botones_row = ft.Row([submit, modificar_button], spacing=10)
+
+    content.controls.clear()
+    content.controls.append(
+        ft.Column(
+            [
+                titulo,
+                ft.Row([tf_user, tf_password, tf_email], spacing=10),
+                ft.Row([tf_rol, tf_estado], spacing=10),
+                botones_row,
+                navegacion_paginacion,  # Agregado encima de la tabla
+                users_table,
+            ],
+            alignment=ft.MainAxisAlignment.START,  # Alineación hacia arriba
+            spacing=10,
+        )
+    )
+
+    cargar_usuarios(pagina_actual)
+    page.update()
+
+
+def main(page: ft.Page):
+    db = MongoDBConnection()  # Instancia de conexión a MongoDB
+    content = ft.Column(
+        expand=True, alignment=ft.MainAxisAlignment.START
+    )  # Contenedor principal para el contenido dinámico
+
+    users_table = ft.DataTable(
+        border=ft.border.all(1, "grey"),
+        border_radius=10,
+        vertical_lines=ft.BorderSide(1, "grey"),
+        width=1000,
+        columns=[
+            ft.DataColumn(ft.Text("Nombre")),
+            ft.DataColumn(ft.Text("Clave")),
+            ft.DataColumn(ft.Text("E-mail")),
+            ft.DataColumn(ft.Text("Rol")),
+            ft.DataColumn(ft.Text("Estado")),
+            ft.DataColumn(ft.Text("Acciones")),
+        ],
+        rows=[],
+    )
+
+    def on_navigation_change():
+        mostrar_usuarios_view(page, content, db, users_table)
+
+    on_navigation_change()  # Llamar inicialmente
+
+    page.add(content)
+
+
+if __name__ == "__main__":
+    ft.app(target=main)
