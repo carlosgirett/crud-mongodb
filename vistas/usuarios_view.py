@@ -1,7 +1,7 @@
 import flet as ft
 from conexion.conexion import MongoDBConnection  # Importa la clase de conexión
 
-# Función principal de la vista de usuarios
+
 def mostrar_usuarios_view(page: ft.Page, content: ft.Column, db, users_table):
     page.title = "Gestión de Usuarios"
     page.window_width = 1335
@@ -11,6 +11,10 @@ def mostrar_usuarios_view(page: ft.Page, content: ft.Column, db, users_table):
     usuarios_por_pagina = 10
     pagina_actual = 0
     usuario_seleccionado = None
+
+    # Variables de búsqueda
+    tf_buscar = ft.TextField(label="Buscar usuario", width=200)
+    usuarios_filtrados = []
 
     # Título principal
     titulo = ft.Text("Gestión de usuarios", size=24, weight="bold")
@@ -22,7 +26,54 @@ def mostrar_usuarios_view(page: ft.Page, content: ft.Column, db, users_table):
     tf_rol = ft.TextField(label="Rol")
     tf_estado = ft.TextField(label="Estado")
 
-    # Función para guardar un nuevo usuario en la base de datos
+    def limpiar_campos():
+        tf_user.value = ""
+        tf_password.value = ""
+        tf_email.value = ""
+        tf_rol.value = ""
+        tf_estado.value = ""
+        page.update()
+
+    def cargar_usuarios(pagina, usuarios=None):
+        nonlocal usuarios_filtrados
+        users = usuarios if usuarios is not None else db.get_all_documents("usuarios")
+        if not usuarios:  # Si no se especifican usuarios filtrados, utilizar los completos
+            usuarios_filtrados = users
+
+        users_table.rows.clear()
+        inicio = pagina * usuarios_por_pagina
+        fin = inicio + usuarios_por_pagina
+        usuarios_pagina = usuarios_filtrados[inicio:fin]
+
+        for user in usuarios_pagina:
+            users_table.rows.append(
+                ft.DataRow(
+                    cells=[
+                        ft.DataCell(ft.Text(user.get("nombre", ""))),
+                        ft.DataCell(ft.Text(user.get("clave", ""))),
+                        ft.DataCell(ft.Text(user.get("email", ""))),
+                        ft.DataCell(ft.Text(user.get("rol", ""))),
+                        ft.DataCell(ft.Text(user.get("estado", ""))),
+                        ft.DataCell(ft.Row([
+                            ft.IconButton(icon=ft.icons.EDIT, on_click=seleccionar_usuario, data=user["_id"]),
+                            ft.IconButton(icon=ft.icons.DELETE, on_click=eliminar_fila, data=user["_id"])
+                        ]))
+                    ]
+                )
+            )
+
+        # Actualizar el estado de los botones de paginación
+        btn_anterior.disabled = pagina_actual <= 0
+        btn_siguiente.disabled = fin >= len(usuarios_filtrados)
+        page.update()
+
+    def cambiar_pagina(incremento):
+        nonlocal pagina_actual
+        pagina_actual += incremento
+        if pagina_actual < 0:
+            pagina_actual = 0
+        cargar_usuarios(pagina_actual, usuarios_filtrados)
+
     def guardar_usuario(e):
         if not (
             tf_user.value.strip() and tf_password.value.strip() and tf_email.value.strip() and tf_rol.value.strip() and tf_estado.value.strip()):
@@ -70,18 +121,6 @@ def mostrar_usuarios_view(page: ft.Page, content: ft.Column, db, users_table):
 
         limpiar_campos()
         cargar_usuarios(pagina_actual)
-        page.update()
-
-    def cerrar_dialogo(dialog):
-        dialog.open = False
-        page.update()
-
-    def limpiar_campos():
-        tf_user.value = ""
-        tf_password.value = ""
-        tf_email.value = ""
-        tf_rol.value = ""
-        tf_estado.value = ""
 
     def modificar_usuario(e):
         if not usuario_seleccionado or not (
@@ -126,45 +165,40 @@ def mostrar_usuarios_view(page: ft.Page, content: ft.Column, db, users_table):
             tf_estado.value = usuario.get("estado", "")
             page.update()
 
-    def cargar_usuarios(pagina):
-        users = db.get_all_documents("usuarios")
-        users_table.rows.clear()
-        inicio = pagina * usuarios_por_pagina
-        fin = inicio + usuarios_por_pagina
-        usuarios_pagina = users[inicio:fin]
-
-        for user in usuarios_pagina:
-            users_table.rows.append(
-                ft.DataRow(
-                    cells=[
-                        ft.DataCell(ft.Text(user.get("nombre", ""))),
-                        ft.DataCell(ft.Text(user.get("clave", ""))),
-                        ft.DataCell(ft.Text(user.get("email", ""))),
-                        ft.DataCell(ft.Text(user.get("rol", ""))),
-                        ft.DataCell(ft.Text(user.get("estado", ""))),
-                        ft.DataCell(ft.Row([
-                            ft.IconButton(icon=ft.icons.EDIT, on_click=seleccionar_usuario, data=user["_id"]),
-                            ft.IconButton(icon=ft.icons.DELETE, on_click=eliminar_fila, data=user["_id"])
-                        ]))
-                    ]
-                )
-            )
+    def cerrar_dialogo(dialog):
+        dialog.open = False
         page.update()
 
-    def cambiar_pagina(incremento):
-        nonlocal pagina_actual
-        pagina_actual += incremento
-        if pagina_actual < 0:
-            pagina_actual = 0
-        cargar_usuarios(pagina_actual)
+    def buscar_usuario(e):
+        nonlocal usuarios_filtrados
+        query = tf_buscar.value.strip().lower()
+        if query:
+            usuarios_filtrados = [user for user in db.get_all_documents("usuarios") if query in user.get("nombre", "").lower()]
+        else:
+            usuarios_filtrados = db.get_all_documents("usuarios")
+        cargar_usuarios(pagina_actual, usuarios_filtrados)
 
     btn_anterior = ft.IconButton(icon=ft.icons.ARROW_LEFT, on_click=lambda e: cambiar_pagina(-1))
     btn_siguiente = ft.IconButton(icon=ft.icons.ARROW_RIGHT, on_click=lambda e: cambiar_pagina(1))
-    navegacion_paginacion = ft.Row([btn_anterior, btn_siguiente], alignment=ft.MainAxisAlignment.START)
+    btn_buscar = ft.OutlinedButton(text="Buscar", on_click=buscar_usuario)
+
+    navegacion_row = ft.Row(
+        [
+            tf_buscar,
+            btn_buscar,
+            btn_anterior,
+            btn_siguiente,
+        ],
+        alignment=ft.MainAxisAlignment.START,
+        spacing=10,
+    )
 
     submit = ft.OutlinedButton(text="Guardar", on_click=guardar_usuario)
     modificar_button = ft.OutlinedButton(text="Modificar", on_click=modificar_usuario)
-    botones_row = ft.Row([submit, modificar_button], spacing=10)
+    limpiar_button = ft.OutlinedButton(text="Limpiar Campos", on_click=lambda e: limpiar_campos())
+    botones_row = ft.Row([submit, modificar_button, limpiar_button], spacing=10)
+
+    espacio = ft.Container(height=20)
 
     content.controls.clear()
     content.controls.append(
@@ -174,47 +208,14 @@ def mostrar_usuarios_view(page: ft.Page, content: ft.Column, db, users_table):
                 ft.Row([tf_user, tf_password, tf_email], spacing=10),
                 ft.Row([tf_rol, tf_estado], spacing=10),
                 botones_row,
-                navegacion_paginacion,  # Agregado encima de la tabla
+                espacio,
+                navegacion_row,
                 users_table,
             ],
-            alignment=ft.MainAxisAlignment.START,  # Alineación hacia arriba
+            alignment=ft.MainAxisAlignment.START,
             spacing=10,
         )
     )
 
     cargar_usuarios(pagina_actual)
     page.update()
-
-
-def main(page: ft.Page):
-    db = MongoDBConnection()  # Instancia de conexión a MongoDB
-    content = ft.Column(
-        expand=True, alignment=ft.MainAxisAlignment.START
-    )  # Contenedor principal para el contenido dinámico
-
-    users_table = ft.DataTable(
-        border=ft.border.all(1, "grey"),
-        border_radius=10,
-        vertical_lines=ft.BorderSide(1, "grey"),
-        width=1000,
-        columns=[
-            ft.DataColumn(ft.Text("Nombre")),
-            ft.DataColumn(ft.Text("Clave")),
-            ft.DataColumn(ft.Text("E-mail")),
-            ft.DataColumn(ft.Text("Rol")),
-            ft.DataColumn(ft.Text("Estado")),
-            ft.DataColumn(ft.Text("Acciones")),
-        ],
-        rows=[],
-    )
-
-    def on_navigation_change():
-        mostrar_usuarios_view(page, content, db, users_table)
-
-    on_navigation_change()  # Llamar inicialmente
-
-    page.add(content)
-
-
-if __name__ == "__main__":
-    ft.app(target=main)
