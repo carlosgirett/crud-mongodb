@@ -2,10 +2,12 @@ import flet as ft
 from conexion.conexion import MongoDBConnection  # Importa la clase de conexión
 from vistas.usuarios_view import mostrar_usuarios_view  # Importa la vista de usuarios
 from vistas.clientes_view import mostrar_clientes_view  # Importa la vista de clientes
+from vistas.productos_view import mostrar_productos_view #Importa la vista de prductos
 
 def main(page: ft.Page):
     page.title = "Barra de Navegación"
-
+    page.window_x = 1
+    page.window_y = 1
     # Crear la conexión a MongoDB
     db = MongoDBConnection()
 
@@ -51,6 +53,27 @@ def main(page: ft.Page):
         rows=[],
     )
 
+    # Inicialización de la tabla para productos
+    # Inicialización de la tabla para productos
+    productos_table = ft.DataTable(
+        border=ft.border.all(1, "grey"),
+        border_radius=10,
+        vertical_lines=ft.BorderSide(1, "grey"),
+        width=3000,  # Ajusta el ancho total de la tabla
+        columns=[
+            ft.DataColumn(ft.Text("Nombre", size=16)),
+            ft.DataColumn(ft.Text("Marca", size=16)),
+            ft.DataColumn(ft.Text("Precio de \nCompra", size=16)),
+            ft.DataColumn(ft.Text("Precio de \nVenta", size=16)),
+            ft.DataColumn(ft.Text("Stock \nDisponible", size=16)),
+            ft.DataColumn(ft.Text("Cantidad \nMínima", size=16)),
+            ft.DataColumn(ft.Text("Proveedor", size=16)),
+            ft.DataColumn(ft.Text("Estado", size=16)),
+            ft.DataColumn(ft.Text("Acciones", size=16)),
+        ],
+        rows=[],
+    )
+
     # Función para cambiar el contenido según la opción seleccionada
     def on_navigation_change(e=None):
         selected_index = rail.selected_index  # Lee el índice seleccionado del NavigationRail
@@ -60,15 +83,8 @@ def main(page: ft.Page):
             mostrar_usuarios_view(page, content, db, users_table)
         elif selected_index == 1:  # Opción "Clientes"
             mostrar_clientes_view(page, content, db, clientes_table)
-        elif selected_index == 2:  # Opción "Ayuda"
-            content.controls.append(
-                ft.Column(
-                    [ft.Text("Opción 3 seleccionada: Ayuda", size=24, weight="bold")],
-                    alignment=ft.MainAxisAlignment.START,
-                    expand=True,
-                )
-            )
-
+        elif selected_index == 2:  # Opción "Productos"
+            mostrar_productos_view(page, content, db, productos_table)
         page.update()
 
     # NavigationRail
@@ -90,9 +106,9 @@ def main(page: ft.Page):
                 label="Clientes",
             ),
             ft.NavigationRailDestination(
-                icon=ft.Icon(ft.Icons.HELP),
-                selected_icon=ft.Icon(ft.Icons.HELP),
-                label="Ayuda",
+                icon=ft.Icon(ft.Icons.SHOPIFY),
+                selected_icon=ft.Icon(ft.Icons.SHOPIFY),
+                label="Productos",
             ),
         ],
     )
