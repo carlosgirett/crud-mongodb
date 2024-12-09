@@ -3,8 +3,6 @@ import flet as ft
 def mostrar_clientes_view(page: ft.Page, content: ft.Column, db, clientes_table):
     print("Vista de Clientes cargada")
     page.title = "Gestión de Clientes"
-    page.window_width = 1335
-    page.window_height = 800
 
     #variables de paginacion
     clientes_por_pagina = 10
@@ -23,7 +21,7 @@ def mostrar_clientes_view(page: ft.Page, content: ft.Column, db, clientes_table)
     tf_apellido = ft.TextField(label="Apellido")
     tf_ruc = ft.TextField(label="Ruc")
     tf_direccion = ft.TextField(label="Direccion")
-    tf_fecha_nacimiento = ft.TextField(label="Fecha de Nacmiento aa-mm-dd")
+    tf_fecha_nacimiento = ft.TextField(label="Fecha de Nacimiento aa-mm-dd")
 
     #limpia los campos de texto
     def limpiar_campos():
@@ -35,8 +33,9 @@ def mostrar_clientes_view(page: ft.Page, content: ft.Column, db, clientes_table)
         tf_buscar.value = ""
         page.update()
 
-    #funcion que carga los valores en la tabla
-    def cargar_clientes(pagina, clientes=None, clientes_por_pagina=10):
+    # Función para cargar los regsitros de clientes en la tabla según la página actual,
+    # gestionando la paginación y actualizando la lista de clientes filtrados.
+    def cargar_clientes(pagina, clientes=None, clientes_por_pagina=8):
         nonlocal clientes_filtrados
         customers = clientes if clientes is not None else db.get_all_documents("clientes")
         if not clientes:
@@ -76,6 +75,8 @@ def mostrar_clientes_view(page: ft.Page, content: ft.Column, db, clientes_table)
             pagina_actual = 0
         cargar_clientes(pagina_actual, clientes_filtrados)
 
+    # Función para validar los datos ingresados, guardar un nuevo cliente en la base de datos
+    # y manejar posibles errores o advertencias al usuario.
     def guardar_cliente(e):
         if not(
             tf_nombre.value.strip() and tf_apellido.value.strip() and  tf_ruc.value.strip() and tf_direccion.value.strip() and tf_fecha_nacimiento.value.strip()):
@@ -102,9 +103,9 @@ def mostrar_clientes_view(page: ft.Page, content: ft.Column, db, clientes_table)
                 db.insert_document("clientes", nuevo_cliente)
             except Exception as ex:
                 dialog = ft.AlertDialog(
-                title=ft.Text("Error"),
-                content=ft.Text(f"No se pudo guardar el cliente: {ex}"),
-                actions=[ft.TextButton("Aceptar", on_click=lambda e: cerrar_dialogo(dialog))]
+                    title=ft.Text("Error"),
+                    content=ft.Text(f"No se pudo guardar el cliente: {ex}"),
+                    actions=[ft.TextButton("Aceptar", on_click=lambda e: cerrar_dialogo(dialog))]
                 )
                 page.dialog = dialog
                 dialog.open = True
@@ -112,9 +113,9 @@ def mostrar_clientes_view(page: ft.Page, content: ft.Column, db, clientes_table)
                 return
         else:
             dialog = ft.AlertDialog(
-            title=ft.Text("Error"),
-            content=ft.Text("No se pudo conectar con la base de datos."),
-            actions=[ft.TextButton("Aceptar", on_click=lambda e: cerrar_dialogo(dialog))]
+                title=ft.Text("Error"),
+                content=ft.Text("No se pudo conectar con la base de datos."),
+                actions=[ft.TextButton("Aceptar", on_click=lambda e: cerrar_dialogo(dialog))]
             )
             page.dialog = dialog
             dialog.open = True
@@ -124,6 +125,8 @@ def mostrar_clientes_view(page: ft.Page, content: ft.Column, db, clientes_table)
         limpiar_campos()
         cargar_clientes(pagina_actual)
 
+    # Función para modificar un registro de cliente existente en la base de datos
+    # después de validar que un cliente ha sido seleccionado y los campos están completos.
     def modificar_cliente(e):
         if not cliente_seleccionado or not(
             tf_nombre.value.strip() and tf_apellido.value.strip() and  tf_ruc.value.strip() and tf_direccion.value.strip() and tf_fecha_nacimiento.value.strip()):
@@ -149,11 +152,13 @@ def mostrar_clientes_view(page: ft.Page, content: ft.Column, db, clientes_table)
         limpiar_campos()
         cargar_clientes(pagina_actual)
 
+    #funcion para eliminar cliente seleccionado de la base de datos
     def eliminar_fila(e):
         fila_id = e.control.data
         db.delete_document("clientes", {"_id": fila_id})
         cargar_clientes(pagina_actual)
 
+    # Función para seleccionar un cliente de la base de datos y cargar sus datos en el formulario.
     def seleccionar_cliente(e):
         nonlocal cliente_seleccionado
         fila_id = e.control.data
@@ -171,6 +176,8 @@ def mostrar_clientes_view(page: ft.Page, content: ft.Column, db, clientes_table)
         dialog.open = False
         page.update()
 
+    # Función para buscar clientes en la base de datos según el texto ingresado
+    # y actualizar la lista de clientes mostrados en la interfaz.
     def buscar_cliente(e):
         nonlocal clientes_filtrados
         query = tf_buscar.value.strip().lower()

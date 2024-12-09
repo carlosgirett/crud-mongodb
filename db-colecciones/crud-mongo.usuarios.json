@@ -1,0 +1,116 @@
+[{
+  "_id": {
+    "$oid": "6723c375149d7b7a2448151f"
+  },
+  "nombre": "Cristina",
+  "clave": "cristina",
+  "email": "ccontreras@gmail.com",
+  "estado": "True",
+  "rol": "Vendedora",
+  "clave_hash": {
+    "$binary": {
+      "base64": "JDJiJDEyJDFyZkNLeWZ0anNCcHk0R1lwaUI5WGVmZVRtL1hjQ0lIRVpEVW0wb0RyeGNXWVVmVUNoQ21L",
+      "subType": "00"
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6723c3aa149d7b7a24481520"
+  },
+  "nombre": "Gustavo",
+  "clave": "Gcardozo",
+  "email": "gustavocardozo23@gmail.com",
+  "estado": "True",
+  "rol": "Vendedor"
+},
+{
+  "_id": {
+    "$oid": "6723c3b8149d7b7a24481521"
+  },
+  "nombre": "Jessica",
+  "clave": "JsC",
+  "email": "jessicac@outlook.com",
+  "estado": "True",
+  "rol": "Cajero"
+},
+{
+  "_id": {
+    "$oid": "6723e469149d7b7a24481522"
+  },
+  "nombre": "Benjamin",
+  "clave": "benja1234",
+  "email": "bgaleano@outlook.es",
+  "rol": "cajero",
+  "estado": "True"
+},
+{
+  "_id": {
+    "$oid": "6723e512149d7b7a24481523"
+  },
+  "nombre": "Jose",
+  "clave": "jj2024",
+  "email": "josevillam@icloud.com",
+  "rol": "Vendedor",
+  "estado": "False"
+},
+{
+  "_id": {
+    "$oid": "6723e545149d7b7a24481524"
+  },
+  "nombre": "Juan",
+  "clave": "JJ2323",
+  "email": "juanr",
+  "rol": "Vendedor",
+  "estado": "True"
+},
+{
+  "_id": {
+    "$oid": "6723e59b149d7b7a24481526"
+  },
+  "nombre": "Nando",
+  "clave": "NNunez23",
+  "email": "nandonunez23@hotmail.com",
+  "rol": "Administrador",
+  "estado": "True"
+},
+{
+  "_id": {
+    "$oid": "6723e5c2149d7b7a24481527"
+  },
+  "nombre": "Amparo",
+  "clave": "ampv2312",
+  "email": "amparo@outlook.es",
+  "rol": "Administrador",
+  "estado": "False"
+},
+{
+  "_id": {
+    "$oid": "6723e5e6149d7b7a24481528"
+  },
+  "nombre": "Jennifer",
+  "clave": "jjarami231",
+  "email": "jenniferarami@outlook.es",
+  "rol": "Adminstrador",
+  "estado": "True"
+},
+{
+  "_id": {
+    "$oid": "67571cb954f3486fe45d7882"
+  },
+  "nombre": "carlos",
+  "clave": "2024",
+  "email": "carlossaulgirett29@gmail.com",
+  "rol": "Administrador",
+  "estado": "True"
+},
+{
+  "_id": {
+    "$oid": "67572fc030f0113f8208a429"
+  },
+  "nombre": "saul",
+  "clave": "222",
+  "email": "saul@gmail.com",
+  "rol": "estudiante",
+  "estado": "false"
+}]

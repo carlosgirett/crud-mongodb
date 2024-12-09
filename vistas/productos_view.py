@@ -2,8 +2,6 @@ import flet as ft
 def mostrar_productos_view(page: ft.Page, content: ft.Column, db, productos_table):
     print("Vista de productos cargada")
     page.title = "Gestión de Productos"
-    page.window_width = 1435
-    page.window_height = 770
 
     # Variables de paginación
     productos_por_pagina = 10
@@ -40,8 +38,9 @@ def mostrar_productos_view(page: ft.Page, content: ft.Column, db, productos_tabl
         tf_buscar.value = ""
         page.update()
 
-    # Función que carga los valores en la tabla
-    def cargar_productos(pagina, productos=None, productos_por_pagina=10):
+    # Función para cargar los productos en la tabla según la página actual,
+    # gestionando la paginación y actualizando la lista de productos filtrados.
+    def cargar_productos(pagina, productos=None, productos_por_pagina=8):
         nonlocal productos_filtrados
         products = productos if productos is not None else db.get_all_documents("productos")
         if not productos:
@@ -52,36 +51,35 @@ def mostrar_productos_view(page: ft.Page, content: ft.Column, db, productos_tabl
         fin = inicio + productos_por_pagina
         productos_por_pagina = productos_filtrados[inicio:fin]
 
-
-        # Agregar contenido a la tabla
-        # Cambiar wrap por max_lines en cada celda
+        # Código para generar dinámicamente las filas de una tabla con los datos de los productos
+        # gestiona la paginación y las acciones como editar o eliminar.
         for product in productos_por_pagina:
             productos_table.rows.append(
                 ft.DataRow(
                     cells=[
                         ft.DataCell(
-                            ft.Text(product.get("nombre", ""), max_lines=3)  # Ajustar el texto a máximo 2 líneas
+                            ft.Text(product.get("nombre", ""), max_lines=3,style=ft.TextStyle(size=12))  # Ajustar el texto a máximo 2 líneas
                         ),
                         ft.DataCell(
-                            ft.Text(product.get("marca", ""), max_lines=3)
+                            ft.Text(product.get("marca", ""), max_lines=3,style=ft.TextStyle(size=12))
                         ),
                         ft.DataCell(
-                            ft.Text(product.get("Precio_compra", ""), max_lines=3)
+                            ft.Text(product.get("Precio_compra", ""), max_lines=3, style=ft.TextStyle(size=12))
                         ),
                         ft.DataCell(
-                            ft.Text(product.get("precio_venta", ""), max_lines=3)
+                            ft.Text(product.get("precio_venta", ""), max_lines=3, style=ft.TextStyle(size=12))
                         ),
                         ft.DataCell(
-                            ft.Text(product.get("stock_disponible", ""), max_lines=3)
+                            ft.Text(product.get("stock_disponible", ""), max_lines=3, style=ft.TextStyle(size=12))
                         ),
                         ft.DataCell(
-                            ft.Text(product.get("cantidad_minima", ""), max_lines=3)
+                            ft.Text(product.get("cantidad_minima", ""), max_lines=3,style=ft.TextStyle(size=12))
                         ),
                         ft.DataCell(
-                            ft.Text(product.get("proveedor", ""), max_lines=3)
+                            ft.Text(product.get("proveedor", ""), max_lines=3,style=ft.TextStyle(size=11))
                         ),
                         ft.DataCell(
-                            ft.Text(product.get("estado", ""), max_lines=3)
+                            ft.Text(product.get("estado", ""), max_lines=3,style=ft.TextStyle(size=11))
                         ),
                         ft.DataCell(
                             ft.Row([
@@ -97,8 +95,7 @@ def mostrar_productos_view(page: ft.Page, content: ft.Column, db, productos_tabl
         btn_siguiente.disabled = fin >= len(productos_filtrados)
         page.update()
 
-    # Resto del código...
-
+#funcion para cambiar de pagina en la tabla
     def cambiar_pagina(incremento):
         nonlocal pagina_actual
         pagina_actual += incremento
@@ -106,6 +103,8 @@ def mostrar_productos_view(page: ft.Page, content: ft.Column, db, productos_tabl
             pagina_actual = 0
         cargar_productos(pagina_actual, productos_filtrados)
 
+    # Función para validar los datos ingresados, guardar un nuevo producto en la base de datos
+    # y manejar posibles errores o advertencias al usuario.
     def guardar_producto(e):
         if not(
             tf_nombre.value.strip() and tf_marca.value.strip() and tf_precio_compra.value.strip() and tf_precio_venta.value.strip() and tf_stock.value.strip() and tf_cantidad_minima.value.strip() and tf_proveedor.value.strip() and tf_estado.value.strip()):
@@ -156,6 +155,8 @@ def mostrar_productos_view(page: ft.Page, content: ft.Column, db, productos_tabl
         limpiar_campos()
         cargar_productos(pagina_actual)
 
+    # Función para modificar un producto existente en la base de datos
+    # después de validar que un producto ha sido seleccionado y los campos están completos.
     def modificar_producto(e):
         if not producto_seleccionado or not(
             tf_nombre.value.strip() and tf_marca.value.strip() and tf_precio_compra.value.strip() and tf_precio_venta.value.strip() and tf_stock.value.strip() and tf_cantidad_minima.value.strip() and tf_proveedor.value.strip() and tf_estado.value.strip()):
@@ -184,11 +185,13 @@ def mostrar_productos_view(page: ft.Page, content: ft.Column, db, productos_tabl
         limpiar_campos()
         cargar_productos(pagina_actual)
 
+    #funcion que elimina el producto seleccionado
     def eliminar_fila(e):
         fila_id = e.control.data
         db.delete_document("productos", {"_id": fila_id})
         cargar_productos(pagina_actual)
 
+    # Función para seleccionar un producto de la base de datos y cargar sus datos en el formulario.
     def seleccionar_producto(e):
         nonlocal producto_seleccionado
         fila_id = e.control.data
@@ -209,6 +212,8 @@ def mostrar_productos_view(page: ft.Page, content: ft.Column, db, productos_tabl
         dialog.open = False
         page.update()
 
+    # Función para buscar productos en la base de datos según el texto ingresado
+    # y actualizar la lista de productos mostrados en la interfaz.
     def buscar_producto(e):
         nonlocal productos_filtrados
         query = tf_buscar.value.strip().lower()

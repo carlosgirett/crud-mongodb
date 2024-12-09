@@ -1,0 +1,39 @@
+[{
+  "_id": {
+    "$oid": "67548489ea9af01a158676a6"
+  },
+  "nombre": "Aqua de Gio 100 ml",
+  "marca": "Armani",
+  "Precio_compra": "702.800",
+  "precio_venta": "998.900",
+  "stock_disponible": "15",
+  "cantidad_minima": "10",
+  "proveedor": "Armani",
+  "estado": "Disponible"
+},
+{
+  "_id": {
+    "$oid": "6754855bea9af01a158676a7"
+  },
+  "nombre": "protector solar 120ml",
+  "marca": "La Roche Posay",
+  "Precio_compra": "89.250",
+  "precio_venta": "210.900",
+  "stock_disponible": "20",
+  "cantidad_minima": "10",
+  "proveedor": "La Roche Posay",
+  "estado": "Disponible"
+},
+{
+  "_id": {
+    "$oid": "6754858aea9af01a158676a8"
+  },
+  "nombre": "Polo blue rahl lauren edt 200ml",
+  "marca": "Ralph Lauren",
+  "Precio_compra": "889.750",
+  "precio_venta": "1.336.000",
+  "stock_disponible": "8",
+  "cantidad_minima": "8",
+  "proveedor": "Ralph Lauren",
+  "estado": "Disponible"
+}]

@@ -1,0 +1,90 @@
+[{
+  "_id": {
+    "$oid": "67535bdeea9af01a15867692"
+  },
+  "nombre": "Juan",
+  "apellido": "Pérez",
+  "ruc": "2343564-0",
+  "direccion": "Caacupe",
+  "fecha_nacimiento": "1990-05-15"
+},
+{
+  "_id": {
+    "$oid": "67535c57ea9af01a15867694"
+  },
+  "nombre": "Dionicio",
+  "apellido": "Pérez",
+  "ruc": "3453123-9",
+  "direccion": "Asuncion",
+  "fecha_nacimiento": "2003-05-15"
+},
+{
+  "_id": {
+    "$oid": "67535c8fea9af01a15867695"
+  },
+  "nombre": "Marcela",
+  "apellido": "Alcaraz",
+  "ruc": "67652323",
+  "direccion": "Eusebio Ayala",
+  "fecha_nacimiento": "2001-06-07"
+},
+{
+  "_id": {
+    "$oid": "675373bca6b7d2bd33988cb9"
+  },
+  "nombre": "Lile",
+  "apellido": "Cartman",
+  "ruc": "3987990",
+  "direccion": "Isla Pucu",
+  "fecha_nacimiento": "2003-09-22"
+},
+{
+  "_id": {
+    "$oid": "6756ee1a5873a8c211d86a85"
+  },
+  "nombre": "Robert",
+  "apellido": "Baratheon",
+  "ruc": "8997786",
+  "direccion": "Caacupe",
+  "fecha_nacimiento": "2001-02-14"
+},
+{
+  "_id": {
+    "$oid": "6756ee3f5873a8c211d86a86"
+  },
+  "nombre": "Carlos",
+  "apellido": "Girett",
+  "ruc": "8765456",
+  "direccion": "San Jose Obrero",
+  "fecha_nacimiento": "2003-03-30"
+},
+{
+  "_id": {
+    "$oid": "6756ee9b5873a8c211d86a87"
+  },
+  "nombre": "Melissa",
+  "apellido": "Mendez",
+  "ruc": "878670",
+  "direccion": "Asuncion",
+  "fecha_nacimiento": "2003-12-20"
+},
+{
+  "_id": {
+    "$oid": "6756eec55873a8c211d86a88"
+  },
+  "nombre": "Luis",
+  "apellido": "Cabañas",
+  "ruc": "2342178-9",
+  "direccion": "Isla Pucu",
+  "fecha_nacimiento": "1998-12-13"
+},
+{
+  "_id": {
+    "$oid": "6756eefa5873a8c211d86a89"
+  },
+  "nombre": "Ramon",
+  "apellido": "Careaga",
+  "ruc": "2457897-8",
+  "direccion": "Mbokajaty",
+  "fecha_nacimiento": "2000-08-21"
+}]

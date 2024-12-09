@@ -2,13 +2,13 @@ import flet as ft
 
 
 def mostrar_usuarios_view(page: ft.Page, content: ft.Column, db, users_table):
+    # Contenedor para mostrar contenido dinámico
     print("Vista de usuarios cargada")
     page.title = "Gestión de Usuarios"
-    page.window_width = 1335
-    page.window_height = 800
+    page.window.resizable = False
 
     # Variables para la paginación
-    usuarios_por_pagina = 10
+    usuarios_por_pagina = 8
     pagina_actual = 0
     usuario_seleccionado = None
 
@@ -36,7 +36,8 @@ def mostrar_usuarios_view(page: ft.Page, content: ft.Column, db, users_table):
         tf_buscar.value = ""
         page.update()
 
-    #funcion que carga los usuarios en la tabla
+    # Función para cargar los usuarios en la tabla según la página actual,
+    # gestionando la paginación y actualizando la lista de productos filtrados.
     def cargar_usuarios(pagina, usuarios=None):
         nonlocal usuarios_filtrados
         users = usuarios if usuarios is not None else db.get_all_documents("usuarios")
@@ -77,6 +78,8 @@ def mostrar_usuarios_view(page: ft.Page, content: ft.Column, db, users_table):
             pagina_actual = 0
         cargar_usuarios(pagina_actual, usuarios_filtrados)
 
+    # Función para validar los datos ingresados, guardar un nuevo usuario en la base de datos
+    # y manejar posibles errores o advertencias al usuario.
     def guardar_usuario(e):
         if not (
             tf_user.value.strip() and tf_password.value.strip() and tf_email.value.strip() and tf_rol.value.strip() and tf_estado.value.strip()):
@@ -125,6 +128,8 @@ def mostrar_usuarios_view(page: ft.Page, content: ft.Column, db, users_table):
         limpiar_campos()
         cargar_usuarios(pagina_actual)
 
+    # Función para modificar un usuario existente en la base de datos
+    # después de validar que un usuario ha sido seleccionado y los campos están completos.
     def modificar_usuario(e):
         if not usuario_seleccionado or not (
                 tf_user.value.strip() and tf_password.value.strip() and tf_email.value.strip() and tf_rol.value.strip() and tf_estado.value.strip()):
@@ -150,11 +155,13 @@ def mostrar_usuarios_view(page: ft.Page, content: ft.Column, db, users_table):
         limpiar_campos()
         cargar_usuarios(pagina_actual)
 
+    #funcion que elimina un usuario seleccionado en la base de datos
     def eliminar_fila(e):
         fila_id = e.control.data
         db.delete_document("usuarios", {"_id": fila_id})
         cargar_usuarios(pagina_actual)
 
+    # Función para seleccionar un usuario de la base de datos y cargar sus datos en el formulario.
     def seleccionar_usuario(e):
         nonlocal usuario_seleccionado
         fila_id = e.control.data
@@ -172,6 +179,8 @@ def mostrar_usuarios_view(page: ft.Page, content: ft.Column, db, users_table):
         dialog.open = False
         page.update()
 
+    # Función para buscar usuarios en la base de datos según el texto ingresado
+    # y actualizar la lista de productos mostrados en la interfaz.
     def buscar_usuario(e):
         nonlocal usuarios_filtrados
         query = tf_buscar.value.strip().lower()
